@@ -925,6 +925,7 @@ def serve(
     location: bool = True,
     threaded: bool = False,
     admin: bool = False,
+    daemon_thread: bool = False
     **kwargs
 ) -> StoppableThread | Server:
     """
@@ -971,6 +972,9 @@ def serve(
       Whether to start the server on a new Thread
     admin: boolean (default=False)
       Whether to enable the admin panel
+    daemon_thread: boolean (default=False)
+      start server thread as daemonic thread. This allows the application to exit
+      without explicitly ending the thread
     kwargs: dict
       Additional keyword arguments to pass to Server instance
     """
@@ -987,6 +991,7 @@ def serve(
         server = StoppableThread(
             target=get_server, io_loop=loop, args=(panels,), kwargs=kwargs
         )
+        server.daemon_thread = daemon_thread
         server_id = kwargs.get('server_id', uuid.uuid4().hex)
         state._threads[server_id] = server
         server.start()
